@@ -53,5 +53,5 @@ Thumbs.db
 .dockerignore
 Dockerfile
 
-# Node artifacts (falls mal frontend assets generiert werden)
+# Node artifacts
 node_modules/
