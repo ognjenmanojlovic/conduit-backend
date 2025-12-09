@@ -1,5 +1,5 @@
 # === Build stage ===
-FROM python:3.7-slim AS builder
+FROM python:3.5-slim AS builder
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 
-FROM python:3.7-slim
+FROM python:3.5-slim
 
 WORKDIR /app
 
