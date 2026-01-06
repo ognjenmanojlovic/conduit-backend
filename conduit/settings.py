@@ -20,12 +20,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2^f+3@v7$v1f8yt0!s)3-1t$)tlp+xm17=*g))_xoi&&9m#2a&'
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "unsafe-default-change-me-change-in-env",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get(
+    "DJANGO_ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
+
 
 
 # Application definition
@@ -83,10 +90,12 @@ WSGI_APPLICATION = 'conduit.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+DJANGO_DB_PATH = os.environ.get("DJANGO_DB_PATH", os.path.join(BASE_DIR, "db.sqlite3"))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': DJANGO_DB_PATH,
     }
 }
 
@@ -129,10 +138,22 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CORS_ORIGIN_WHITELIST = (
-    '0.0.0.0:4000',
-    'localhost:4000',
-)
+# CORS configuration
+cors_origins = os.environ.get("DJANGO_CORS_ORIGIN_WHITELIST", "")
+
+if cors_origins:
+    CORS_ORIGIN_WHITELIST = [
+        origin.strip()
+        for origin in cors_origins.split(",")
+        if origin.strip()
+    ]
+else:
+    # Fallback for local development
+    CORS_ORIGIN_WHITELIST = [
+        "0.0.0.0:4000",
+        "localhost:4000",
+    ]
+
 
 # Tell Django about the custom `User` model we created. The string
 # `authentication.User` tells Django we are referring to the `User` model in
